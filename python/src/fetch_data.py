@@ -14,31 +14,20 @@ def fetch_request(url):
         data = response.read().decode("utf-8")
         return data
 
-def fetch_list():
-    now_time = time.localtime()
-    date = {"year": now_time.tm_year,"month": now_time.tm_mon}
-    
-    """ Reformatting the correct format of URI  """
-
-    if date['month'] > 11:
-        date['month'] = 11
-    elif date['month'] > 6:
-        date['month'] = 6
-    else:
-        date['month'] = 11
-        date['year'] -= 1
+def fetch_list(data):
     
     """ Data fetching """
 
-    fetch_url = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=date["year"],month=date["month"],number=1)
+    """ Reformatting the correct format of URI  """
+    fetch_url = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
     print("fetch_url",fetch_url)
     response = fetch_request(fetch_url)
 
     data = BeautifulSoup(response,"html.parser")
     #print(data.prettify())
 
+
     """ copy html table without title """
-    
     Computer_list = data.find_all("table")[0].find_all("tr")[1:]
 
     python_table = []
@@ -48,7 +37,6 @@ def fetch_list():
         row_data = []
         
         row = element.find_all("td")
-        
         
         """ Parsing country name """
         try:
@@ -65,13 +53,13 @@ def fetch_list():
         try:
             row_data.append(row[1].find_all("b")[0].text)
         except:
-            print("Unsupported format - name")
-            print(row[1])
-            row_data.append("No name")
+            name = row[1].find_all("a")[0].text
+            name = name.split(",")[0]
+            row_data.append(name)
         
         """ Parsing Manufactor """
         try:
-            manufactor = re.search("<\/a> [a-zA-Z0-9_ \/.,]+\n",str(row[1])).group(0)
+            manufactor = re.search("<\/a> [a-zA-Z0-9_\- \/.,]+\n",str(row[1])).group(0)
             manufactor = manufactor.split("</a>")[1]
             manufactor = manufactor.split("\n")[0]
             row_data.append(manufactor)
@@ -87,5 +75,5 @@ def fetch_list():
         python_table.append(row_data)
     
     DataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
-    print(DataFrame)
+    return DataFrame
     
