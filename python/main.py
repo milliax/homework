@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from src.fetch_data import fetch_list  
 
 def main():
