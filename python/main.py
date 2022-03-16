@@ -1,3 +1,4 @@
+from aiohttp import ClientSession
 from src.fetch_data import fetch_list
 from flask import Flask, request
 import pandas as pd
@@ -19,8 +20,20 @@ def home():
 @app.route("/callback", methods=["POST"])
 async def callback():
     date = time_parser(request.json["time"])
-    dataframe = await fetch_data(date)
 
+    """ Getting the initial data parallelly"""
+    loop = asyncio.get_event_loop()
+    
+    task = [asyncio.create_task(fetch_list({
+            "year": date["year"],
+            "month": date["month"],
+            "page": i+1
+        }) for i in range(5))]
+
+    seperated_dataFrame = await loop.run_until_complete(asyncio.gather(*task))
+    dataframe = pd.concat(seperated_dataFrame, ignore_index=True)
+
+    """ returning pictures """
     file_name = []
     for e in request.json["methods"]:
         if e == "country":
@@ -36,17 +49,15 @@ async def callback():
 
 
 async def fetch_data(date):
-    print("program started")
-    print(date["year"])
-    print(date["month"])
+    
+    results = []
+    """ building thread """
+    async with ClientSession() as session:
+        tasks = [asyncio.create_task()]
 
-    group = asyncio.gather(*[fetch_list({
-        "year": date['year'],
-        "month": date['month'],
-        "page": i+1
-    }) for i in range(5)])
-
-    results = asyncio.get_event_loop().run_until_complete(group)
+        """ push works """
+        results = await asyncio.gather(*tasks)
+    
     data = pd.concat(results, ignore_index=True)
 
     return data

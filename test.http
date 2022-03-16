@@ -1,0 +1,10 @@
+GET http://localhost:3000/
+
+###
+POST http://localhost:3000/callback
+Content-Type: application/json
+
+{
+    "time": "1647357215300",
+    "methods": ["country","energy","manufacturer"]
+}

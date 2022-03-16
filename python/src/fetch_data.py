@@ -22,9 +22,9 @@ async def fetch_list(data):
     """ Reformatting the correct format of URI  """
     fetch_url = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
     print("fetch_url",fetch_url)
-    response = await fetch_request(fetch_url)
+    response = fetch_request(fetch_url)
 
-    data = await BeautifulSoup(response,"html.parser")
+    data = BeautifulSoup(response,"html.parser")
     #print(data.prettify())
 
 
@@ -74,7 +74,8 @@ async def fetch_list(data):
 
         row_data.append(row[1].find_all("a")[0].get("href"))
         python_table.append(row_data)
-    
+
     DataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
+    print(DataFrame)
     return DataFrame
     
