@@ -3,6 +3,7 @@ import urllib.request as req
 import time
 import pandas as pd
 import re
+import asyncio
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"
 
@@ -14,16 +15,16 @@ def fetch_request(url):
         data = response.read().decode("utf-8")
         return data
 
-def fetch_list(data):
+async def fetch_list(data):
     
     """ Data fetching """
 
     """ Reformatting the correct format of URI  """
     fetch_url = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
     print("fetch_url",fetch_url)
-    response = fetch_request(fetch_url)
+    response = await fetch_request(fetch_url)
 
-    data = BeautifulSoup(response,"html.parser")
+    data = await BeautifulSoup(response,"html.parser")
     #print(data.prettify())
 
 

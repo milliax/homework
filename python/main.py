@@ -1,57 +1,56 @@
-import os
-from dotenv import load_dotenv
-load_dotenv()
-import time
+from src.fetch_data import fetch_list
+from flask import Flask, request
 import pandas as pd
+import os
+import asyncio
+from dotenv import load_dotenv
+from src.utils import time_parser
+from src.plot_drawer import draw_country, draw_energy, draw_manufacturer
+load_dotenv()
 
-from src.fetch_data import fetch_list  
+app = Flask(__name__)
 
-def main():
+
+@app.route("/")
+def home():
+    return "Good"
+
+
+@app.route("/callback", methods=["POST"])
+async def callback():
+    date = time_parser(request.json["time"])
+    dataframe = await fetch_data(date)
+
+    file_name = []
+    for e in request.json["methods"]:
+        if e == "country":
+            file_name.append(draw_country(dataframe))
+        elif e == "energy":
+            file_name.append(draw_energy(dataframe))
+        elif e == "manufacturer":
+            file_name.append(draw_manufacturer(dataframe))
+
+    return {
+        "file_name": file_name
+    }
+
+
+async def fetch_data(date):
     print("program started")
+    print(date["year"])
+    print(date["month"])
 
-    now_time = time.localtime()
-    date = {"year": now_time.tm_year,"month": now_time.tm_mon}
-
-    if date['month'] > 11:
-        date['month'] = 11
-    elif date['month'] > 6:
-        date['month'] = 6
-    else:
-        date['month'] = 11
-        date['year'] -= 1
-
-    result1 = fetch_list({
+    group = asyncio.gather(*[fetch_list({
         "year": date['year'],
         "month": date['month'],
-        "page": 1
-    })
-    result2 = fetch_list({
-        "year": date['year'],
-        "month": date['month'],
-        "page": 2
-    })
-    result3 = fetch_list({
-        "year": date['year'],
-        "month": date['month'],
-        "page": 3
-    })
-    result4 = fetch_list({
-        "year": date['year'],
-        "month": date['month'],
-        "page": 4
-    })
-    result5 = fetch_list({
-        "year": date['year'],
-        "month": date['month'],
-        "page": 5
-    })
+        "page": i+1
+    }) for i in range(5)])
 
+    results = asyncio.get_event_loop().run_until_complete(group)
+    data = pd.concat(results, ignore_index=True)
 
-    print(pd.concat([result1,result2,result3,result4,result5],ignore_index=True))
-
-
-
-
+    return data
 
 if __name__ == "__main__":
-    main()
+    # main()
+    app.run(host="0.0.0.0", port=3000)
