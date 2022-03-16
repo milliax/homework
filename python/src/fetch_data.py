@@ -15,67 +15,58 @@ def fetch_request(url):
         data = response.read().decode("utf-8")
         return data
 
-async def fetch_list(data):
-    
-    """ Data fetching """
+async def fetch_list(data,session):
+    async with session("https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])) as response:
+        """ Parse Data """
+        data = BeautifulSoup(await response.text(),"html.parser")
 
-    """ Reformatting the correct format of URI  """
-    fetch_url = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
-    print("fetch_url",fetch_url)
-    response = fetch_request(fetch_url)
+        """ copy html table without title """
+        Computer_list = data.find_all("table")[0].find_all("tr")[1:]
 
-    data = BeautifulSoup(response,"html.parser")
-    #print(data.prettify())
+        python_table = []
+        for element in Computer_list:
+            ## print(element)
+            row_data = []
 
+            row = element.find_all("td")
 
-    """ copy html table without title """
-    Computer_list = data.find_all("table")[0].find_all("tr")[1:]
+            """ Parsing country name """
+            try:
+                country = re.search("<br\/>((\w+ \w+ \w+)|(\w+ \w+)|(\w+))\n",str(row[1])).group(0)
+                country = country.split("<br/>")[1]
+                country = country.split("\n")[0]
+                row_data.append(country)
+            except:
+                row_data.append("failed to fetech")
+                print(str(row[1]))
+                print("Unsupported format - country")
 
-    python_table = []
+            """ Parsing name """
+            try:
+                row_data.append(row[1].find_all("b")[0].text)
+            except:
+                name = row[1].find_all("a")[0].text
+                name = name.split(",")[0]
+                row_data.append(name)
 
-    for element in Computer_list:
-        ## print(element)
-        row_data = []
-        
-        row = element.find_all("td")
-        
-        """ Parsing country name """
-        try:
-            country = re.search("<br\/>((\w+ \w+ \w+)|(\w+ \w+)|(\w+))\n",str(row[1])).group(0)
-            country = country.split("<br/>")[1]
-            country = country.split("\n")[0]
-            row_data.append(country)
-        except:
-            row_data.append("failed to fetech")
-            print(str(row[1]))
-            print("Unsupported format - country")
+            """ Parsing Manufactor """
+            try:
+                manufactor = re.search("<\/a> [a-zA-Z0-9_\- \/.,]+\n",str(row[1])).group(0)
+                manufactor = manufactor.split("</a>")[1]
+                manufactor = manufactor.split("\n")[0]
+                row_data.append(manufactor)
+            except:
+                row_data.append("failed to fetch")
+                print(str(row[1]))
+                print("Unsupported format - manufactor")
 
-        """ Parsing name """
-        try:
-            row_data.append(row[1].find_all("b")[0].text)
-        except:
-            name = row[1].find_all("a")[0].text
-            name = name.split(",")[0]
-            row_data.append(name)
-        
-        """ Parsing Manufactor """
-        try:
-            manufactor = re.search("<\/a> [a-zA-Z0-9_\- \/.,]+\n",str(row[1])).group(0)
-            manufactor = manufactor.split("</a>")[1]
-            manufactor = manufactor.split("\n")[0]
-            row_data.append(manufactor)
-        except:
-            row_data.append("failed to fetch")
-            print(str(row[1]))
-            print("Unsupported format - manufactor")
+            for e in row[2:]:
+                row_data.append(e)
 
-        for e in row[2:]:
-            row_data.append(e)
+            row_data.append(row[1].find_all("a")[0].get("href"))
+            python_table.append(row_data)
 
-        row_data.append(row[1].find_all("a")[0].get("href"))
-        python_table.append(row_data)
+        DataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
+        print(DataFrame)
+        return DataFrame
 
-    DataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
-    print(DataFrame)
-    return DataFrame
-    
