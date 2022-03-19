@@ -28,7 +28,7 @@ async def callback():
     loop = asyncio.get_event_loop()
     print("deploy jobs")
     
-    seperated_DF = loop.run_until_complete(asyncio.gather(
+    seperated_DF = loop.run_until_complete(await asyncio.gather(
         *[fetch_list({
             "year": date["year"],
             "month": date["month"],

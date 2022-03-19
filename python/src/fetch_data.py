@@ -18,13 +18,14 @@ async def fetch_request(url):
 async def fetch_list(data):
     link = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
     print(link)
-    
+    return "Happy"
     """ fetching data """
     body = fetch_request(link)
 
     """ Parse Data """
     data = BeautifulSoup(body,"html.parser")
     print("data parsing")
+    
     """ copy html table without title """
     Computer_list = data.find_all("table")[0].find_all("tr")[1:]
     python_table = []
