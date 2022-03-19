@@ -1,6 +1,6 @@
 from os import sep
 from src.fetch_data import fetch_list
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 import pandas as pd
 import urllib.request as req
 #from dotenv import load_dotenv
@@ -22,11 +22,6 @@ async def callback():
     date = time_parser(request.json["time"])
 
     """ Getting the initial data parallelly"""
-    # create a coroutine
-    #allDF = loop.run_until_complete(handle_callback(date))
-    # create a coroutine
-    print("create loop")
-    
     
     print("deploy jobs")
     results = []
@@ -34,15 +29,7 @@ async def callback():
     ## creating multiprocessing pool
     pool = multiprocessing.Pool(5)
 
-
     ## deploying works
-    """for page in range(1,6):
-        result = pool.apply_async(fetch_list({
-            "year": date["year"],
-            "month": date["month"],
-            "page": page
-        }))
-        results.append(result)"""
     input = [{
             "year": date["year"],
             "month": date["month"],
@@ -58,7 +45,6 @@ async def callback():
     
     for page in range(1,6):
         location = "./dataframe{page}.csv".format(page=page)
-        print(location)
         dataframe = pd.read_csv(location)
         seperated_DF.append(dataframe)
     
@@ -85,6 +71,10 @@ def shutdown():
         raise RuntimeError('Not running werkzeug')
     shutdown_func()
     return "Shutting down..."
+
+@app.get("/picture/<path:path>")
+def send_picture(path):
+    return send_from_directory('static',path)
 
 if __name__ == "__main__":
     # main()
