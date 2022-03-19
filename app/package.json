@@ -1,0 +1,13 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "description": "the frontend of python crawler",
+  "main": "main.js",
+  "scripts": {
+    "start": "electon .",
+    "postinstall": "electron-rebuild"
+  },
+  "devDependencies": {
+    "electron": "^17.1.2"
+  }
+}

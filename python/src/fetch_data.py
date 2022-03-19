@@ -63,7 +63,7 @@ def fetch_list(data):
         python_table.append(row_data)
     
     dataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
-    location = "./dataframe{page}.csv".format(page=data["page"])
+    location = "python/dataframe{page}.csv".format(page=data["page"])
     dataFrame.to_csv(location)
     return
 

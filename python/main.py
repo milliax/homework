@@ -44,7 +44,7 @@ async def callback():
     seperated_DF = []
     
     for page in range(1,6):
-        location = "./dataframe{page}.csv".format(page=page)
+        location = "python/dataframe{page}.csv".format(page=page)
         dataframe = pd.read_csv(location)
         seperated_DF.append(dataframe)
     
