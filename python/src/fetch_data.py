@@ -3,31 +3,28 @@ import urllib.request as req
 import time
 import pandas as pd
 import re
-import asyncio
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"
 
-async def fetch_request(url):
+def fetch_request(url):
     request = req.Request(url,headers={
         "User-Agent": USER_AGENT
     })
     with req.urlopen(request) as response:
-        data = await response.read().decode("utf-8")
+        data = response.read().decode("utf-8")
     return data
 
-async def fetch_list(data):
+def fetch_list(data):
     link = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
     print(link)
-    return "Happy"
     """ fetching data """
     body = fetch_request(link)
 
     """ Parse Data """
-    data = BeautifulSoup(body,"html.parser")
-    print("data parsing")
+    datum = BeautifulSoup(body,"html.parser")
     
     """ copy html table without title """
-    Computer_list = data.find_all("table")[0].find_all("tr")[1:]
+    Computer_list = datum.find_all("table")[0].find_all("tr")[1:]
     python_table = []
     for element in Computer_list:
         ## print(element)
@@ -65,7 +62,9 @@ async def fetch_list(data):
         row_data.append(row[1].find_all("a")[0].get("href"))
         python_table.append(row_data)
     
-    DataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
-    print(DataFrame)
-    return DataFrame
+    dataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
+    location = "./dataframe{page}.csv".format(page=data["page"])
+    print(location)
+    dataFrame.to_csv(location)
+    return
 

@@ -8,3 +8,7 @@ Content-Type: application/json
     "time": "1647357215300",
     "methods": ["country","energy","manufacturer"]
 }
+
+###
+GET http://localhost:3000/shutdown
+
