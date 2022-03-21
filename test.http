@@ -10,5 +10,8 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3000/picture/62F766.png
+
+###
 GET http://localhost:3000/shutdown
 
