@@ -5,6 +5,7 @@ import uuid
 import os
 
 def draw_country(dataframe):
+    print(dataframe)
     trans_dataframe = dataframe[["country"]].to_numpy().flatten()
     # print(trans_dataframe)
 

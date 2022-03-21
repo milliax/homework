@@ -1,12 +1,12 @@
-import path from "path";
-import {BrowserWindow,app} from "electron";
+const path = require("path");
+const { BrowserWindow, app } = require("electron")
 
-if (process.env.NODE_env === "development"){
+if (process.env.NODE_env === "development") {
     const execPath = process.platform === "win32" ?
         "../node_modules/electron/dist/electron.exe" :
         ".../node_modules/.bin/electron";
-    require("electron-reload")(__dirname,{
-        electron: path.resolve(__dirname,execPath),
+    require("electron-reload")(__dirname, {
+        electron: path.resolve(__dirname, execPath),
     })
 }
 
@@ -16,15 +16,15 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        webPreferences:{
-            preload: path.resolve(__dirname,"preload.js"),
+        webPreferences: {
+            preload: path.resolve(__dirname, "preload.js"),
         }
     })
-    mainWindow.loadFile("index.html")
+    mainWindow.loadFile("src/index.html")
 }
 
 app.whenReady().then(() => {
     createWindow()
 })
 
-app.once("window-all-closed",()=> app.quit())
+app.once("window-all-closed", () => app.quit())

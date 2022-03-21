@@ -16,3 +16,6 @@ python
 1. https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}
 month=[6|11]
 number=[1|2|3|4|5]
+
+## link
+1. https://zenn.dev/sprout2000/articles/5d7b350c2e85bc
