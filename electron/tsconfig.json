@@ -1,5 +1,5 @@
 {
-    "compilerOptions":{
+    "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
         "esModuleInterop": true,
@@ -7,7 +7,7 @@
         "strict": true,
         "jsx": "react"
     },
-    "ts-node":{
+    "ts-node": {
         "compilerOptions": {
             "module": "CommonJS"
         }
