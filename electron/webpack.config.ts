@@ -1,6 +1,7 @@
 import { Configuration } from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import path from 'path';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -22,7 +23,8 @@ const common: Configuration = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        include: path.resolve(__dirname,'dist'),
+        use: ['css-loader','style-loader','postcss-loader'],
       },
       {
         test: /\.(ico|png|jpe?g|svg|eot|woff?2?)$/,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './index.css';
 
 const { myAPI } = window;
 
@@ -15,6 +15,9 @@ export const App = () => {
 
   return (
     <div className="container">
+      <div className="w-full h-16 bg-blue-300">
+        Hello
+      </div>
       <h1>{count}</h1>
       <div>
         <button onClick={onCountDown}>&#x25BC;</button>
