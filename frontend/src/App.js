@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Main from "./page/main"
+import Docs from "./page/docs"
+
+
+export function App() {
+    return (
+        <React.Fragment>
+            <div className="bg-red-100 text-center h-16 font-bold text-2xl p-3">
+                Top500.org 數據收集器
+            </div>
+
+            <div className="px-20">
+                <div className="bg-gray-200 px-10 py-5">
+
+
+                    <Routes>
+                        <Route exact path="/" element={<Main />}></Route>
+                        <Route path="docs" element={<Docs />}></Route>
+                    </Routes>
+                </div>
+            </div>
+
+            <div className="bg-gray-300 py-5 px-10">
+                Footer
+            </div>
+        </React.Fragment>
+    );
 }
-
-export default App;
