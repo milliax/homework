@@ -23,8 +23,21 @@ export function App() {
                 </div>
             </div>
 
-            <div className="bg-gray-300 py-5 px-10">
-                Footer
+            <div className="bg-gray-300 py-5 px-10 flex justify-center">
+                <div className="w-1/2">
+                    這裡是腳腳
+
+                    <div>
+                        編篡者：Milliax
+                    </div>
+                </div>
+                <div className="w-1/2">
+                    This is Footer
+
+                    <div>
+                        Coder: Milliax <span className="text-gray-300"> (One and Only) </span>
+                    </div>
+                </div>
             </div>
         </React.Fragment>
     );

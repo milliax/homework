@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 import Circle from "../components/circle"
+import Swal from "sweetalert2"
 
 export default function Main() {
     const [year, setYear] = useState(2021)
@@ -15,6 +16,9 @@ export default function Main() {
     const [loading, setLoading] = useState(false)
     const [first, setFirst] = useState(true)
     const [result, setResult] = useState([])
+    const [timeError, setTimeError] = useState(false)
+
+    const ironic = "https://www.youtube.com/watch?v=XqZsoesa55w&t=27s"
 
     const sendForm = async () => {
         setLoading(true)
@@ -33,13 +37,36 @@ export default function Main() {
         time = time.getTime()
         console.log(time)
 
+        /* Verify time */
+        time_now = new Date()
+        if (time_now < time) {
+            setLoading(false)
+            setTimeError(true)
+            return await Swal.fire({
+                icon: "info",
+                title: "ほんとごめん",
+                text: "本服務尚未進階為量子預測機"
+            })
+        }
+        /* Verify Options */
+        if (methods.length === 0) {
+            setLoading(false)
+            return await Swal.fire({
+                icon: "error",
+                title: "阿啊阿阿阿",
+                text: "你沒有勾選項我是要給你什麼",
+                footer: `<a href="${ironic}"> Why do I have this issue?</a>`
+            })
+        }
+
+
         const body = {
             "time": time,
             "methods": methods
         }
 
         console.log(typeof (time))
-        const res = await fetch(`https://flask.osaka.milliax.me/callback`, {
+        const res = await fetch(`${process.env.REACT_APP_SERVER}/callback`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -55,6 +82,27 @@ export default function Main() {
         setLoading(false)
     }
 
+    useEffect(() => {
+        const verify_time = () => {
+            if (!timeError) return
+            time = new Date(year, month)
+            time_now = new Date()
+
+            if (time_now < time) {
+                setTimeError(false)
+            }
+        }
+
+        verify_time()
+        if (!(year <= 99999999 && year >= 0)){
+            setYear(2021)
+            Swal.fire({
+                icon: "warning",
+                title: "請不要玩我"
+            })
+        }
+    }, [year, month])
+
     return (
         <div className="space-y-10">
             <div>
@@ -62,13 +110,16 @@ export default function Main() {
                     event.preventDefault();
                     sendForm();
                 }} className="space-y-3">
-                    選取資料範圍：
-                    年：
-                    <input className="rounded-lg text-center" type="value" value={year} onChange={event => { setYear(parseInt(event.target.value | 0)) }} />
-                    月：<select className="rounded-lg" onChange={event => { setMonth(event.target.value) }}>
-                        <option value="6">6</option>
-                        <option value="11">11</option>
-                    </select>
+                    <div className="" >
+                        選取資料範圍：
+                        <span className="bg-red-600 rounded-md" hidden={!timeError}> 日期錯誤!!! </span>
+                        年：
+                        <input className="rounded-lg text-center" type="value" value={year} onChange={event => { setYear(parseInt(event.target.value)) }} />
+                        月：<select className="rounded-lg" onChange={event => { setMonth(event.target.value) }}>
+                            <option value="6">6</option>
+                            <option value="11">11</option>
+                        </select>
+                    </div>
 
                     <div className="space-y-1">
                         <div>
@@ -89,6 +140,14 @@ export default function Main() {
                     </button>
 
                 </form>
+            </div>
+
+            {/* Running Pony */}
+            <div className="w-full" hidden={!loading}>
+                <div className="animate-running">
+                    <img alt="Running pony" src="https://i.pinimg.com/originals/10/b7/d4/10b7d409056fb5ebadf13eb20ddf7d87.gif"
+                        className="object-cover w-10" />
+                </div>
             </div>
 
             <div className="" hidden={first}>

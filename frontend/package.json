@@ -14,7 +14,8 @@
     "flow-bin": "^0.175.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "sweetalert2": "^11.4.8"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
