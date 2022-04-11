@@ -17,7 +17,9 @@ app.use(bodyParser.json())
 
 /* broadcast message to all users */
 app.post("/broadcast", (req, res) => {
-    if (req.body.key !== process.env.MY_PRIVATE_KEY) {
+    const auth = req.get("Authorization")
+    console.log(`Authorization: ${auth}`)
+    if (auth !== `Bearer ${process.env.MY_PRIVATE_KEY}`) {
         console.log("Access Deny");
         return res.sendStatus(403);
     }

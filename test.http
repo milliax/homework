@@ -1,7 +1,11 @@
-GET http://localhost:3000/
+@host = https://flask.osaka.milliax.me
+#@host = https://linebot.osaka.milliax.me
 
 ###
-POST http://localhost:3000/callback
+GET {{host}}
+
+###
+POST {{host}}/callback
 Content-Type: application/json
 
 {
@@ -15,3 +19,11 @@ GET http://localhost:3000/picture/62F766.png
 ###
 GET http://localhost:3000/shutdown
 
+###
+POST https://linebot.osaka.milliax.me/broadcast
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "message": "test"
+}

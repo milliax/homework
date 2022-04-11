@@ -6,50 +6,59 @@ import urllib.request as req
 #from dotenv import load_dotenv
 from src.utils import time_parser
 from src.plot_drawer import draw_country, draw_energy, draw_manufacturer
-#load_dotenv()
+# load_dotenv()
 import multiprocessing
+from flask_cors import CORS
+from flask import jsonify
+import json
 
 app = Flask(__name__)
+CORS(app)
 
 # test route
+
+
 @app.route("/")
 def home():
     return "Good"
 
 # actual route
+
+
 @app.route("/callback", methods=["POST"])
 async def callback():
-    date = time_parser(request.json["time"])
-
-    """ Getting the initial data parallelly"""
+    #jsons = request.get_json()
+    date = time_parser(int(request.json["time"]))
     
+    """ Getting the initial data parallelly"""
+
     print("deploy jobs")
     results = []
-    
-    ## creating multiprocessing pool
+
+    # creating multiprocessing pool
     pool = multiprocessing.Pool(5)
 
-    ## deploying works
+    # deploying works
     input = [{
-            "year": date["year"],
-            "month": date["month"],
-            "page": page
-        } for page in range(1,6)]
+        "year": date["year"],
+        "month": date["month"],
+        "page": page
+    } for page in range(1, 6)]
     print(input)
-    results = pool.map_async(fetch_list,input)
-    
+    results = pool.map_async(fetch_list, input)
+
     """ Collecting data """
     results.wait()
-    
+
     seperated_DF = []
-    
-    for page in range(1,6):
+
+    for page in range(1, 6):
         location = "python/dataframe{page}.csv".format(page=page)
         dataframe = pd.read_csv(location)
         seperated_DF.append(dataframe)
-    
+
     allDF = pd.concat(seperated_DF, ignore_index=True)
-    
+
     """ returning pictures """
     file_name = []
     for e in request.json["methods"]:
@@ -64,6 +73,7 @@ async def callback():
         "file_name": file_name
     }
 
+
 @app.get("/shutdown")
 def shutdown():
     shutdown_func = request.environ.get('werkzeug.server.shutdown')
@@ -72,10 +82,12 @@ def shutdown():
     shutdown_func()
     return "Shutting down..."
 
+
 @app.get("/picture/<path:path>")
 def send_picture(path):
-    return send_from_directory('static',path)
+    return send_from_directory('static', path)
+
 
 if __name__ == "__main__":
     # main()
-    app.run(host="0.0.0.0", port=3000, use_reloader=False, debug=False)
+    app.run(host="0.0.0.0", port=7999, use_reloader=False, debug=False)
