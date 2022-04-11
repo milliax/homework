@@ -9,7 +9,7 @@ export function App() {
     return (
         <React.Fragment>
             <div className="bg-red-100 text-center h-16 font-bold text-2xl p-3">
-                Top500.org 數據收集器
+                Top500.org 數據分析器
             </div>
 
             <div className="px-20">

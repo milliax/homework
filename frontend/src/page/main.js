@@ -14,6 +14,7 @@ export default function Main() {
 
     const [loading, setLoading] = useState(false)
     const [first, setFirst] = useState(true)
+    const [result, setResult] = useState([])
 
     const sendForm = async () => {
         setLoading(true)
@@ -31,7 +32,7 @@ export default function Main() {
         time = new Date(year, month)
         time = time.getTime()
         console.log(time)
-        
+
         const body = {
             "time": time,
             "methods": methods
@@ -49,6 +50,7 @@ export default function Main() {
         console.log(res)
         const response = await res.json()
 
+        setResult(response)
         console.log(response)
         setLoading(false)
     }
@@ -91,6 +93,25 @@ export default function Main() {
 
             <div className="" hidden={first}>
                 Results:
+
+                <div className="border-double border-2 border-blue-200 rounded-md">
+
+                    {result.map((item, number) => (
+                        <div className="px-5 py-1">
+                            <div className="border-double border border-blue-500 rounded-md px-3 space-y-1 pb-2">
+                                <div>
+                                    模式: {item.mode}
+                                </div>
+                                <div className="flex justify-center">
+                                    <img alt={`${item.mode}の圖`} src={`${process.env.REACT_APP_SERVER}/picture/${item.src}`}
+                                        className="object-cover w-80 md:w-3/5"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                </div>
             </div>
 
             <div>
