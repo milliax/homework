@@ -2,6 +2,8 @@ import time
 import matplotlib.pyplot as plt
 import uuid
 import os
+import numpy as np
+
 
 def time_parser(Ltime):
     Ltime = int(Ltime) / 1000
@@ -19,11 +21,22 @@ def time_parser(Ltime):
 
     return date
 
+
 def generate_plot(props):
     """ generate plot """
-    plt.figure()
-    plt.pie(props["data"], labels=props["labels"], autopct="%3.2f%%")
-    plt.legend(loc="best")
+    if not ("method" in props):
+        props["method"] = "pie"
+
+    plt.figure(figsize=(10,5))
+    if props["method"] == "pie":
+        y = np.array(props["data"])
+        percent = 100.*y/y.sum()
+        patches, texts = plt.pie(y,startangle=90)
+        labels = ["{label}: {percentage:1.2f}%".format(label=label, percentage=percentage) for (
+            label, percentage) in zip(props["labels"], percent)]
+
+        plt.legend(patches, labels, loc="best",
+                   bbox_to_anchor=(-0.1, 1.), fontsize=12)
 
     root_folder = os.path.dirname(os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))

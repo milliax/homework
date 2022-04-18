@@ -1,4 +1,4 @@
-import pandas as pd
+#import pandas as pd
 import numpy as np
 import re
 from src.utils import generate_plot
@@ -138,7 +138,7 @@ def draw_countability(dataframe):
     
     dataset_in_tuple = [(country_temp,power_temp) for country_temp,power_temp in dataset.items()]
 
-    # pick top 5 contries
+    """ picking top 5 countries """
     sorted_data = sorted(dataset_in_tuple, key=lambda tup: tup[1], reverse=True)
     others = 0
     while(len(sorted_data) > 5):
@@ -150,6 +150,40 @@ def draw_countability(dataframe):
     
     filename = generate_plot({
         "data": rpeak_total,
+        "labels": countries,
+    })
+
+    return filename
+
+def draw_cores(dataframe):
+    trans_dataframe = dataframe[["Country"]].to_numpy().flatten()
+    country, cnt = np.unique(trans_dataframe, return_counts=True)
+
+    dataset = dict((nation, 0.0) for nation in country)
+
+    """ counting total cores """
+    for index, row in dataframe.iterrows():
+        nation = row["Country"]
+        
+        cores = re.search('<td style="text-align: right;">([0-9,]+)</td>', str(row["cores"])).group(1)
+        cores = int(cores.replace(",", ""))
+
+        dataset[nation] += cores
+    
+    dataset_in_tuple = [(country_temp,power_temp) for country_temp,power_temp in dataset.items()]
+
+    """ picking top 5 countries """
+    sorted_data = sorted(dataset_in_tuple, key=lambda tup: tup[1], reverse=True)
+    others = 0
+    while(len(sorted_data) > 5):
+        last = sorted_data.pop()
+        others += last[1]
+
+    countries = list(map(lambda a: a[0], sorted_data))
+    cores = list(map(lambda a: a[1], sorted_data))
+    
+    filename = generate_plot({
+        "data": cores,
         "labels": countries,
     })
 

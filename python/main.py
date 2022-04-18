@@ -3,7 +3,7 @@ from flask import Flask, request, send_from_directory
 import pandas as pd
 #from dotenv import load_dotenv
 from src.utils import time_parser
-from src.plot_drawer import draw_countability, draw_country, draw_energy, draw_manufacturer
+from src.plot_drawer import draw_cores, draw_countability, draw_country, draw_energy, draw_manufacturer
 # load_dotenv()
 import multiprocessing
 from flask_cors import CORS
@@ -60,18 +60,27 @@ async def callback():
         if e == "country":
             file["mode"] = "Country"
             file["src"] = draw_country(allDF)
+            file["note"] = None
             files.append(file)
         elif e == "energy":
             file["mode"] = "Energy"
             file["src"] = draw_energy(allDF)
+            file["note"] = "Top500.org上並不是每一台超級電腦都有這一項數據，因此這項分析可能失準"
             files.append(file)
         elif e == "manufacturer":
             file["mode"] = "Manufacturer"
             file["src"] = draw_manufacturer(allDF)
+            file["note"] = None
             files.append(file)
         elif e=="countability":
             file["mode"] = "Countability"
             file["src"] = draw_countability(allDF)
+            file["note"] = None
+            files.append(file)
+        elif e=="cores":
+            file["mode"] = "Cores"
+            file["src"] = draw_cores(allDF)
+            file["note"] = None
             files.append(file)
 
     return jsonify(files)

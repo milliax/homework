@@ -19,6 +19,7 @@ export default function Main() {
         energy: false,
         manufacturer: false,
         countability: false,
+        cores: false,
     })
 
     const [loading, setLoading] = useState(false)
@@ -68,7 +69,6 @@ export default function Main() {
             })
         }
 
-
         const body = {
             "time": time,
             "methods": methods
@@ -92,7 +92,7 @@ export default function Main() {
     }
 
     const selectingAll = () => {
-        names = ["country", "energy", "manufacturer", "countability"]
+        names = ["country", "energy", "manufacturer", "countability", "cores"]
         setSelectAll(selectAll ^ 1)
 
         let new_list = options
@@ -157,7 +157,10 @@ export default function Main() {
                             <input type="checkbox" value="製造商" checked={options.manufacturer} onChange={() => { setOptions({ ...options, manufacturer: options.manufacturer ^ 1 }) }} /> 製造商
                         </div>
                         <div>
-                            <input type="checkbox" value="耗能/國家" checked={options.energy} onChange={() => { setOptions({ ...options, energy: options.energy ^ 1 }) }} /> 算力/國家
+                            <input type="checkbox" value="耗能/國家" checked={options.energy} onChange={() => { setOptions({ ...options, energy: options.energy ^ 1 }) }} /> 耗能/國家
+                        </div>
+                        <div>
+                            <input type="checkbox" value="核心數/國家" checked={options.cores} onChange={() => { setOptions({ ...options, cores: options.cores ^ 1 }) }} /> 核心數/國家
                         </div>
                     </div>
 
@@ -197,6 +200,7 @@ export default function Main() {
                                         className="object-cover w-80 md:w-3/5"
                                     />
                                 </div>
+                                <div hidden={item.note ? false : true}>備註：{item.note}</div>
                             </div>
                         </div>
                     ))}
