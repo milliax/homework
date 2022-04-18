@@ -5,7 +5,7 @@ import pandas as pd
 import urllib.request as req
 #from dotenv import load_dotenv
 from src.utils import time_parser
-from src.plot_drawer import draw_country, draw_energy, draw_manufacturer
+from src.plot_drawer import draw_countability, draw_country, draw_energy, draw_manufacturer
 # load_dotenv()
 import multiprocessing
 from flask_cors import CORS
@@ -44,7 +44,7 @@ async def callback():
         "month": date["month"],
         "page": page
     } for page in range(1, 6)]
-    print(input)
+    #print(input)
     results = pool.map_async(fetch_list, input)
 
     """ Collecting data """
@@ -60,18 +60,27 @@ async def callback():
     allDF = pd.concat(seperated_DF, ignore_index=True)
 
     """ returning pictures """
-    file_name = []
+    files = []
     for e in request.json["methods"]:
+        file = {}
         if e == "country":
-            file_name.append(draw_country(allDF))
+            file["mode"] = "Country"
+            file["src"] = draw_country(allDF)
+            files.append(file)
         elif e == "energy":
-            file_name.append(draw_energy(allDF))
+            file["mode"] = "Energy"
+            file["src"] = draw_energy(allDF)
+            files.append(file)
         elif e == "manufacturer":
-            file_name.append(draw_manufacturer(allDF))
+            file["mode"] = "Macufacturer"
+            file["src"] = draw_manufacturer(allDF)
+            files.append(file)
+        elif e=="countability":
+            file["mode"] = "Countability"
+            file["src"] = draw_countability(allDF)
+            files.append(file)
 
-    return {
-        "file_name": file_name
-    }
+    return jsonify(files)
 
 
 @app.get("/shutdown")

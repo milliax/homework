@@ -16,7 +16,7 @@ def fetch_request(url):
 
 def fetch_list(data):
     link = "https://www.top500.org/lists/top500/list/{year}/{month}/?page={number}".format(year=data["year"],month=data["month"],number=data["page"])
-    print(link)
+    #print(link)
     """ fetching data """
     body = fetch_request(link)
 
@@ -62,7 +62,7 @@ def fetch_list(data):
         row_data.append(row[1].find_all("a")[0].get("href"))
         python_table.append(row_data)
     
-    dataFrame = pd.DataFrame(python_table,columns=["country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
+    dataFrame = pd.DataFrame(python_table,columns=["Country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
     location = "python/dataframe{page}.csv".format(page=data["page"])
     dataFrame.to_csv(location)
     return
