@@ -35,16 +35,13 @@ def draw_country(dataframe):
 
     return filename
 
-
 def draw_energy(dataframe):
     trans_dataframe = dataframe[["Country"]].to_numpy().flatten()
     country, cnt = np.unique(trans_dataframe, return_counts=True)
 
     dataset = dict((nation, 0) for nation in country)
-    print(dataset)
-
+    #print(dataset)
     dataframe = dataframe.reset_index()
-
     error_country= []
 
     """ counting total power usage """
@@ -79,18 +76,81 @@ def draw_energy(dataframe):
         "labels": countries,
     })
 
-    print(error_country)
+    #print(error_country)
     return filename
 
+def draw_manufacturer(dataframe):
+    trans_dataframe = dataframe[["Manufacturer"]].to_numpy().flatten()
+    manufacturers, cnt = np.unique(trans_dataframe, return_counts=True)
+
+    brands = []
+    for e in manufacturers:
+        result = e.split("/")
+        for ee in result:
+            brands.append(ee.strip())
+
+    brands = np.unique(brands)
+    dataset = dict((brand, 0) for brand in brands)
+    
+    """ counting total power usage """
+    for index, row in dataframe.iterrows():
+        brand = row["Manufacturer"]
+        
+        result = brand.split("/")
+        for ee in result:
+            dataset[ee.strip()] += 1
+        
+    dataset_in_tuple = [(country_temp,power_temp) for country_temp,power_temp in dataset.items()]
+
+    # pick top 5 manufactor
+    sorted_data = sorted(dataset_in_tuple, key=lambda tup: tup[1], reverse=True)
+    others = 0
+    while(len(sorted_data) > 5):
+        last = sorted_data.pop()
+        others += last[1]
+    
+    manufacturer = list(map(lambda a: a[0], sorted_data))
+    count = list(map(lambda a: a[1], sorted_data))
+
+    manufacturer.append("others")
+    count.append(others)
+
+    filename = generate_plot({
+        "data": count,
+        "labels": manufacturer,
+    })
+
+    return filename
 
 def draw_countability(dataframe):
-    # print(dataframe)
-    #trans_dataframe = dataframe[["energy"]].to_numpy().flatten()
-    # print(trans_dataframe)
-    return "Nothing"
+    trans_dataframe = dataframe[["Country"]].to_numpy().flatten()
+    country, cnt = np.unique(trans_dataframe, return_counts=True)
 
+    dataset = dict((nation, 0.0) for nation in country)
 
-def draw_manufacturer(dataframe):
-    #trans_dataframe = dataframe[["country"]].to_numpy().flatten()
-    # print(trans_dataframe)
-    return "Nothing"
+    """ counting total countability """
+    for index, row in dataframe.iterrows():
+        nation = row["Country"]
+        rpeak = re.search('<td style="text-align: right;">([0-9,.]+)<\/td>', str(row["Rpeak"])).group(1)
+        rpeak = float(rpeak.replace(",", ""))
+
+        dataset[nation] += rpeak
+    
+    dataset_in_tuple = [(country_temp,power_temp) for country_temp,power_temp in dataset.items()]
+
+    # pick top 5 contries
+    sorted_data = sorted(dataset_in_tuple, key=lambda tup: tup[1], reverse=True)
+    others = 0
+    while(len(sorted_data) > 5):
+        last = sorted_data.pop()
+        others += last[1]
+    
+    countries = list(map(lambda a: a[0], sorted_data))
+    rpeak_total = list(map(lambda a: a[1], sorted_data))
+    
+    filename = generate_plot({
+        "data": rpeak_total,
+        "labels": countries,
+    })
+
+    return filename

@@ -1,8 +1,6 @@
-from os import sep
 from src.fetch_data import fetch_list
 from flask import Flask, request, send_from_directory
 import pandas as pd
-import urllib.request as req
 #from dotenv import load_dotenv
 from src.utils import time_parser
 from src.plot_drawer import draw_countability, draw_country, draw_energy, draw_manufacturer
@@ -10,13 +8,10 @@ from src.plot_drawer import draw_countability, draw_country, draw_energy, draw_m
 import multiprocessing
 from flask_cors import CORS
 from flask import jsonify
-import json
 
 app = Flask(__name__)
 CORS(app)
-
 # test route
-
 
 @app.route("/")
 def home():
@@ -44,12 +39,11 @@ async def callback():
         "month": date["month"],
         "page": page
     } for page in range(1, 6)]
-    #print(input)
+    
     results = pool.map_async(fetch_list, input)
 
     """ Collecting data """
     results.wait()
-
     seperated_DF = []
 
     for page in range(1, 6):
@@ -72,7 +66,7 @@ async def callback():
             file["src"] = draw_energy(allDF)
             files.append(file)
         elif e == "manufacturer":
-            file["mode"] = "Macufacturer"
+            file["mode"] = "Manufacturer"
             file["src"] = draw_manufacturer(allDF)
             files.append(file)
         elif e=="countability":

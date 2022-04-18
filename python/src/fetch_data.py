@@ -47,22 +47,22 @@ def fetch_list(data):
             name = row[1].find_all("a")[0].text
             name = name.split(",")[0]
             row_data.append(name)
-        """ Parsing Manufactor """
+        """ Parsing Manufacturer """
         try:
-            manufactor = re.search("<\/a> [a-zA-Z0-9_\- \/.,]+\n",str(row[1])).group(0)
-            manufactor = manufactor.split("</a>")[1]
-            manufactor = manufactor.split("\n")[0]
-            row_data.append(manufactor)
+            manufacturer = re.search("<\/a> [a-zA-Z0-9_\- \/.,]+\n",str(row[1])).group(0)
+            manufacturer = manufacturer.split("</a>")[1]
+            manufacturer = manufacturer.split("\n")[0]
+            row_data.append(manufacturer)
         except:
             row_data.append("failed to fetch")
             print(str(row[1]))
-            print("Unsupported format - manufactor")
+            print("Unsupported format - manufacturer")
         for e in row[2:]:
             row_data.append(e)
         row_data.append(row[1].find_all("a")[0].get("href"))
         python_table.append(row_data)
     
-    dataFrame = pd.DataFrame(python_table,columns=["Country","Name","Manufactor","cores","Rmax","Rpeak","Power","link"])
+    dataFrame = pd.DataFrame(python_table,columns=["Country","Name","Manufacturer","cores","Rmax","Rpeak","Power","link"])
     location = "python/dataframe{page}.csv".format(page=data["page"])
     dataFrame.to_csv(location)
     return
