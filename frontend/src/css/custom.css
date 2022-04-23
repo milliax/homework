@@ -1,0 +1,14 @@
+@keyframes ponyRun{
+    from {
+        transform: translateX(0%)
+    }
+    to {
+        transform: translateX(100%)
+    }
+}
+
+.runningPony{
+    animation-name: ponyRun;
+    animation-duration: 10s;
+    animation-iteration-count: infinite; 
+}

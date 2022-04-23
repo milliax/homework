@@ -12,27 +12,19 @@ from flask import jsonify
 app = Flask(__name__)
 CORS(app)
 # test route
-
 @app.route("/")
 def home():
     return "Good"
-
 # actual route
-
-
 @app.route("/callback", methods=["POST"])
 async def callback():
     #jsons = request.get_json()
     date = time_parser(int(request.json["time"]))
-    
     """ Getting the initial data parallelly"""
-
     print("deploy jobs")
     results = []
-
     # creating multiprocessing pool
     pool = multiprocessing.Pool(5)
-
     # deploying works
     input = [{
         "year": date["year"],
@@ -45,12 +37,11 @@ async def callback():
     """ Collecting data """
     results.wait()
     seperated_DF = []
-
     for page in range(1, 6):
         location = "python/dataframe{page}.csv".format(page=page)
         dataframe = pd.read_csv(location)
         seperated_DF.append(dataframe)
-
+        
     allDF = pd.concat(seperated_DF, ignore_index=True)
 
     """ returning pictures """

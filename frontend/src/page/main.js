@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 import Circle from "../components/circle"
 import Swal from "sweetalert2"
-
+import "../css/custom.css"
 const KANNA_HASHIMOTO = [
     "https://i.pinimg.com/originals/f6/38/f8/f638f8a25b7c5239c23df2c16da631da.jpg",
     "https://i.pinimg.com/736x/f3/48/e6/f348e62e9e46d0c6e14a5a732dec41e8.jpg",
@@ -22,7 +22,7 @@ export default function Main() {
         cores: false,
     })
 
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [first, setFirst] = useState(true)
     const [result, setResult] = useState([])
     const [timeError, setTimeError] = useState(false)
@@ -58,6 +58,17 @@ export default function Main() {
                 text: "本服務尚未進階為量子預測機"
             })
         }
+        let time_start = new Date(1993,6)
+        if(time < time_start){
+            setLoading(false)
+            setTimeError(true)
+            return await Swal.fire({
+                icon: `info`,
+                title: `注意`,
+                text: `超級電腦數據是從1993年6月開始紀錄的喔`
+            })
+        }
+
         /* Verify Options */
         if (methods.length === 0) {
             setLoading(false)
@@ -116,7 +127,7 @@ export default function Main() {
         }
 
         verify_time()
-        if (!(year <= 99999999 && year >= 0)) {
+        if (!(year <= 9999999 && year >= 0)) {
             setYear(2021)
             Swal.fire({
                 icon: "warning",
@@ -124,6 +135,23 @@ export default function Main() {
             })
         }
     }, [year, month])
+
+    const updateYear = (event)=>{
+        try{
+            if(event.target.value === ""){
+                setYear("")
+                return
+            }
+            let num = parseInt(event.target.value)
+            setYear(num)
+        }catch(err){
+            alert("僅能輸入數字")
+        }
+    }
+
+    const runningPony = {
+        transform: "translateX(10%)",
+    }
 
     return (
         <div className="space-y-10">
@@ -136,7 +164,7 @@ export default function Main() {
                         選取資料範圍：
                         <span className="bg-red-600 rounded-md" hidden={!timeError}> 日期錯誤!!! </span>
                         年：
-                        <input className="rounded-lg text-center" type="value" value={year} onChange={event => { setYear(parseInt(event.target.value)) }} />
+                        <input className="rounded-lg text-center" type="value" value={year} onChange={event => { updateYear(event) }} />
                         月：<select className="rounded-lg" onChange={event => { setMonth(event.target.value) }}>
                             <option value="6">6</option>
                             <option value="11">11</option>
@@ -164,15 +192,15 @@ export default function Main() {
                         </div>
                     </div>
 
-                    <div className="flex flex-row">
+                    <div className="flex flex-row justify-start">
                         <button className="flex bg-blue-300 cursor-pointer hover:bg-blue-700 hover:text-white px-3 rounded-lg disabled:bg-red-600 disabled:text-black disabled:cursor-not-allowed p-1 disabled:hover:bg-red-700"
                             onSubmit={() => { sendForm() }} disabled={loading}>
-                            {loading ? <div className=""><Circle />資料抓取中</div> : <>開爬</>}
+                            {loading ? <div className="flex flex-row text-center items-center"><Circle />資料抓取中</div> : <>開爬</>}
                         </button>
 
                         {/* Running Pony */}
-                        <div className="" hidden={!loading}>
-                            <div className="animate-running">
+                        <div className="grow" hidden={!loading}>
+                            <div className="runningPony">
                                 <img alt="Running pony" src="https://i.pinimg.com/originals/10/b7/d4/10b7d409056fb5ebadf13eb20ddf7d87.gif"
                                     className="object-cover w-10" />
                             </div>
