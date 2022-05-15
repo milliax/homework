@@ -22,7 +22,7 @@ export default function Main() {
         cores: false,
     })
 
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [first, setFirst] = useState(true)
     const [result, setResult] = useState([])
     const [timeError, setTimeError] = useState(false)

@@ -3,3 +3,5 @@ test/
 *.csv
 .vscode/settings.json
 .env
+.parcel/
+.dist/
